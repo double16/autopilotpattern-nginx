@@ -1,14 +1,28 @@
 # A minimal Nginx container including ContainerPilot
-FROM nginx:1.13
+FROM debian:stretch-slim
+MAINTAINER Patrick Double <pat@patdouble.com>
 
-# Add some stuff via apt-get
-RUN apt-get update \
+ENV NGINX_VERSION 1.10.3-1
+
+RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
+        nginx-extras=${NGINX_VERSION} gettext-base \
         bc \
         ca-certificates \
         curl \
         unzip \
     && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /usr/local/lib/lua && curl --fail -s -o /usr/local/lib/lua/prometheus.lua https://raw.githubusercontent.com/knyar/nginx-lua-prometheus/24ab338427bcfd121ac6c9a264a93d482e115e14/prometheus.lua
+
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
+
+EXPOSE 80
+
+STOPSIGNAL SIGQUIT
 
 # Install Consul
 # Releases at https://releases.hashicorp.com/consul
@@ -77,3 +91,13 @@ CMD [ "/usr/local/bin/containerpilot", \
     "nginx", \
         "-g", \
         "daemon off;"]
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.license="MPL-2.0" \
+      org.label-schema.name="Autopilot Pattern Nginx with Extras and Full Prometheus Monitoring" \
+      org.label-schema.url="https://github.com/double16/autopilotpattern-nginx" \
+      org.label-schema.docker.dockerfile="Dockerfile" \
+      org.label-schema.vcs-ref=$SOURCE_REF \
+      org.label-schema.vcs-type='git' \
+      org.label-schema.vcs-url="https://github.com/double16/autopilotpattern-nginx.git" \
+

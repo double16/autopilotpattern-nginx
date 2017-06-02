@@ -3,6 +3,14 @@
   "preStart": "generate-config",
   "services": [
     {
+      "name": "containerpilot",
+      "port": 9090,
+      "health": "/usr/bin/curl --fail -s -o /dev/null http://localhost:9090/metrics",
+      "poll": 5,
+      "ttl": 15,
+      "interfaces": ["eth0"]
+    },
+    {
       "name": "nginx",
       "port": 80,
       "health": "health-check http",
@@ -60,25 +68,6 @@
       "command": ["acme", "watch"],
       "restarts": "unlimited"
     }{{ end }}],
-  "telemetry": {
-    "port": 9090,
-    "sensors": [
-      {
-        "name": "nginx_connections_unhandled_total",
-        "help": "Number of accepted connnections that were not handled",
-        "type": "gauge",
-        "poll": 5,
-        "check": ["sensor", "unhandled"]
-      },
-      {
-        "name": "nginx_connections_load",
-        "help": "Ratio of active connections (less waiting) to the maximum worker connections",
-        "type": "gauge",
-        "poll": 5,
-        "check": ["sensor", "connections_load"]
-      }
-    ]
-  },
   "tasks": [{{ if .ACME_DOMAIN }}
     {
       "name": "acme-checkin",
