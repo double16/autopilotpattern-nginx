@@ -71,6 +71,11 @@
         "-retry-max", "10",
         "-retry-interval", "10s"
       ],
+      health: {
+        exec: ["/usr/bin/curl", "-so", "/dev/null", "http://localhost:8500"],
+        interval: 10,
+        ttl: 25
+      },
       restarts: "unlimited"
     },{{ end }}
     {{ if .ACME_DOMAIN }}{
