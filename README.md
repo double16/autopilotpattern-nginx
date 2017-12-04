@@ -3,8 +3,8 @@ Autopilot Pattern Nginx
 
 *A re-usable Nginx base image implemented according to the [Autopilot Pattern](http://autopilotpattern.io/) for automatic discovery and configuration.*
 
-[![DockerPulls](https://img.shields.io/docker/pulls/autopilotpattern/nginx.svg)](https://registry.hub.docker.com/u/autopilotpattern/nginx/)
-[![DockerStars](https://img.shields.io/docker/stars/autopilotpattern/nginx.svg)](https://registry.hub.docker.com/u/autopilotpattern/nginx/)
+[![DockerPulls](https://img.shields.io/docker/pulls/pdouble16/autopilotpattern-nginx.svg)](https://registry.hub.docker.com/u/pdouble16/autopilotpattern-nginx/)
+[![DockerStars](https://img.shields.io/docker/stars/pdouble16/autopilotpattern-nginx.svg)](https://registry.hub.docker.com/u/pdouble16/autopilotpattern-nginx/)
 
 ### A reusable Nginx container image
 
