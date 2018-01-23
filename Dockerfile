@@ -48,8 +48,8 @@ RUN export CONSUL_TEMPLATE_VERSION=0.18.3 \
     && rm /tmp/consul-template.zip
 
 # Add Containerpilot and set its configuration
-ENV CONTAINERPILOT_VER 3.6.1
-ENV CONTAINERPILOT /etc/containerpilot.json5
+ENV CONTAINERPILOT_VER="3.6.1" \
+    CONTAINERPILOT="/etc/containerpilot.json5"
 
 RUN export CONTAINERPILOT_CHECKSUM=57857530356708e9e8672d133b3126511fb785ab \
     && curl -Lso /tmp/containerpilot.tar.gz \
@@ -80,6 +80,7 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 COPY etc/acme /etc/acme
 COPY etc/containerpilot.json5 /etc/
 COPY etc/nginx /etc/nginx/templates
+COPY etc/consul /etc/consul
 COPY bin /usr/local/bin
 
 # Usable SSL certs written here
@@ -88,8 +89,6 @@ RUN mkdir -p /var/www/ssl
 RUN mkdir -p /var/www/acme/ssl
 # ACME challenge tokens written here
 RUN mkdir -p /var/www/acme/challenge
-# Consul session data written here
-RUN mkdir -p /var/consul
 
 CMD [ "/usr/local/bin/containerpilot"]
 

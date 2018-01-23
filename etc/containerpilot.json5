@@ -61,16 +61,22 @@
       }
     },{{ end }}
     {{ if .CONSUL_AGENT }}{
+      name: "consul-preStart",
+      exec: "consul-manage",
+    },{
       name: "consul-agent",
       exec: [
         "consul", "agent",
-        "-data-dir=/var/lib/consul",
         "-config-dir=/etc/consul",
         "-rejoin",
         "-retry-join", "{{ if .CONSUL }}{{ .CONSUL }}{{ else }}consul{{ end }}",
         "-retry-max", "10",
         "-retry-interval", "10s"
       ],
+      when: {
+        source: "consul-preStart",
+        once: "exitSuccess"
+      },
       health: {
         exec: ["/usr/bin/curl", "-so", "/dev/null", "http://localhost:8500"],
         interval: 10,

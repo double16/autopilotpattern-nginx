@@ -1,0 +1,16 @@
+#!/bin/bash
+
+sed -i "s/CONTAINERPILOT_CONSUL_IP/${CONTAINERPILOT_CONSUL_IP}/" /etc/consul/consul.hcl
+
+if [ -n "$CONSUL_DATACENTER_NAME" ]; then
+    sed -i "s/CONSUL_DATACENTER_NAME/${CONSUL_DATACENTER_NAME}/" /etc/consul/consul.hcl
+elif [ -f "/native/usr/sbin/mdata-get" ]; then
+    DETECTED_DATACENTER_NAME=$(/native/usr/sbin/mdata-get sdc:datacenter_name)
+    sed -i "s/CONSUL_DATACENTER_NAME/${DETECTED_DATACENTER_NAME}/" /etc/consul/consul.hcl
+elif curl --connect-timeout 10 -s -o /dev/null --fail http://169.254.169.254/latest/meta-data/placement/availability-zone; then
+    DETECTED_DATACENTER_NAME="$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)"
+    sed -i "s/CONSUL_DATACENTER_NAME/${DETECTED_DATACENTER_NAME}/" /etc/consul/consul.hcl
+else
+    sed -i "s/CONSUL_DATACENTER_NAME/dc1/" /etc/consul/consul.hcl
+fi
+
