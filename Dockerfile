@@ -26,8 +26,8 @@ STOPSIGNAL SIGQUIT
 
 # Install Consul
 # Releases at https://releases.hashicorp.com/consul
-RUN export CONSUL_VERSION=1.0.2 \
-    && export CONSUL_CHECKSUM=418329f0f4fc3f18ef08674537b576e57df3f3026f258794b4b4b611beae6c9b \
+RUN export CONSUL_VERSION=1.0.3 \
+    && export CONSUL_CHECKSUM=4782e4662de8effe49e97c50b1a1233c03c0026881f6c004144cc3b73f446ec5 \
     && curl --retry 7 --fail -vo /tmp/consul.zip "https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip" \
     && echo "${CONSUL_CHECKSUM}  /tmp/consul.zip" | sha256sum -c \
     && unzip /tmp/consul -d /usr/local/bin \
@@ -48,10 +48,8 @@ RUN export CONSUL_TEMPLATE_VERSION=0.18.3 \
     && rm /tmp/consul-template.zip
 
 # Add Containerpilot and set its configuration
-ENV CONTAINERPILOT_VER="3.6.1" \
-    CONTAINERPILOT="/etc/containerpilot.json5"
-
-RUN export CONTAINERPILOT_CHECKSUM=57857530356708e9e8672d133b3126511fb785ab \
+ENV CONTAINERPILOT_VER="3.6.2" CONTAINERPILOT="/etc/containerpilot.json5"
+RUN export CONTAINERPILOT_CHECKSUM=b799efda15b26d3bbf8fd745143a9f4c4df74da9 \
     && curl -Lso /tmp/containerpilot.tar.gz \
          "https://github.com/joyent/containerpilot/releases/download/${CONTAINERPILOT_VER}/containerpilot-${CONTAINERPILOT_VER}.tar.gz" \
     && echo "${CONTAINERPILOT_CHECKSUM}  /tmp/containerpilot.tar.gz" | sha1sum -c \
@@ -59,8 +57,8 @@ RUN export CONTAINERPILOT_CHECKSUM=57857530356708e9e8672d133b3126511fb785ab \
     && rm /tmp/containerpilot.tar.gz
 
 # Add node_exporter for system level Prometheus metrics
-RUN curl --fail -sL https://github.com/prometheus/node_exporter/releases/download/v0.14.0/node_exporter-0.14.0.linux-amd64.tar.gz |\
-    tar -xzO -f - node_exporter-0.14.0.linux-amd64/node_exporter > /usr/local/bin/node_exporter &&\
+RUN curl --fail -sL https://github.com/prometheus/node_exporter/releases/download/v0.15.2/node_exporter-0.15.2.linux-amd64.tar.gz |\
+    tar -xzO -f - node_exporter-0.15.2.linux-amd64/node_exporter > /usr/local/bin/node_exporter &&\
     chmod +x /usr/local/bin/node_exporter
 
 # Add Dehydrated
