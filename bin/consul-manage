@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cp -f /etc/consul/consul.hcl.orig /etc/consul/consul.hcl
+
 sed -i "s/CONTAINERPILOT_CONSUL_IP/${CONTAINERPILOT_CONSUL_IP}/" /etc/consul/consul.hcl
 
 if [ -n "$CONSUL_DATACENTER_NAME" ]; then

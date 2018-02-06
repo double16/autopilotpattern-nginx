@@ -78,7 +78,7 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 COPY etc/acme /etc/acme
 COPY etc/containerpilot.json5 /etc/
 COPY etc/nginx /etc/nginx/templates
-COPY etc/consul /etc/consul
+COPY etc/consul/consul.hcl /etc/consul/consul.hcl.orig
 COPY bin /usr/local/bin
 
 # Usable SSL certs written here
