@@ -78,12 +78,21 @@
         once: "exitSuccess"
       },
       health: {
-        exec: ["/usr/bin/curl", "-so", "/dev/null", "http://localhost:8500"],
+        exec: ["/usr/bin/curl", "-sfo", "/dev/null", "http://localhost:8500/v1/status/leader"],
         interval: 10,
         ttl: 25
       },
       restarts: "unlimited"
-    },{{ end }}
+    },
+    {
+      name: "consul-restart",
+      exec: [ "/usr/bin/pkill", "consul" ],
+      when: {
+        source: "consul-agent",
+        each: "unhealthy"
+      },
+    },
+    {{ end }}
     {{ if .ACME_DOMAIN }}{
       name: "acme-watch",
       exec: ["acme", "watch"],

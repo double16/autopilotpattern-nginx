@@ -18,8 +18,8 @@ RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
 # Install Consul, releases at https://releases.hashicorp.com/consul
-    && export CONSUL_VERSION=1.0.5 \
-    && export CONSUL_CHECKSUM=0c6db793e49566f839249c5fb58a2262fb79d16a01bc5d41d78c89982760d71f \
+    && export CONSUL_VERSION=1.0.6 \
+    && export CONSUL_CHECKSUM=bcc504f658cef2944d1cd703eda90045e084a15752d23c038400cf98c716ea01 \
     && curl --retry 7 --fail -vo /tmp/consul.zip "https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip" \
     && echo "${CONSUL_CHECKSUM}  /tmp/consul.zip" | sha256sum -c \
     && unzip /tmp/consul -d /usr/local/bin \
