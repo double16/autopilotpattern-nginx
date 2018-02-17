@@ -12,6 +12,7 @@ RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 \
         ca-certificates \
         curl \
         unzip \
+        procps \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /usr/local/lib/lua && curl --fail -s -o /usr/local/lib/lua/prometheus.lua https://raw.githubusercontent.com/knyar/nginx-lua-prometheus/24ab338427bcfd121ac6c9a264a93d482e115e14/prometheus.lua \
 # forward request and error logs to docker log collector
