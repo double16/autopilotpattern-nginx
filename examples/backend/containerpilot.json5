@@ -1,0 +1,75 @@
+{
+  consul: '{{ if .CONSUL_AGENT }}localhost{{ else }}{{ .CONSUL | default "consul" }}{{ end }}:8500',
+  logging: {
+    level: "{{ .LOG_LEVEL | default "INFO" }}",
+    format: "{{ .LOG_FORMAT | default "default" }}",
+  },
+  jobs: [
+    {{ if .CONSUL_AGENT }}
+    {
+      name: "consul-preStart",
+      exec: ["/usr/local/bin/consul-manage", "preStart"],
+    },
+    {
+      name: 'consul-agent',
+      port: 8500,
+      exec: ['/usr/local/bin/consul', 'agent',
+                  '-config-dir=/etc/consul',
+                  '-rejoin',
+                  '-retry-join', '{{ .CONSUL | default "consul" }}',
+                  '-retry-max', '10',
+                  '-retry-interval', '10s'],
+      health: {
+        exec: ['/usr/bin/curl', '-sfo', '/dev/null', 'http://localhost:8500/v1/status/leader'],
+        interval: 10,
+        ttl: 25
+      },
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "inet" }}",
+        "{{ .ADVERTISE_CIDR6 | default "inet6" }}",
+      ],
+      when: {
+        source: "consul-preStart",
+        once: "exitSuccess",
+      },
+      restarts: 'unlimited'
+    },
+    {
+      name: "consul-restart",
+      exec: ["/usr/bin/pkill", "consul"],
+      when: {
+        source: "consul-agent",
+        each: "unhealthy",
+      },
+    },
+    {{ end }}
+    {
+      name: "node-exporter",
+      port: 9100,
+      exec: ["/usr/local/bin/node_exporter","--web.listen-address=:9100"],
+      health: {
+        exec: ["/usr/bin/curl", "--fail", "-s", "-o", "/dev/null", "http://localhost:9100/metrics"],
+        interval: 60,
+        ttl: 90,
+      },
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "inet" }}",
+        "{{ .ADVERTISE_CIDR6 | default "inet6" }}",
+      ],
+    },
+    {
+      name: "backend",
+      port: 3001,
+      exec: ["node", "/opt/hello/index.js"],
+      health: {
+        exec: ["/usr/bin/curl", "--fail", "-s", "-o", "/dev/null", "http://localhost:3001/"],
+        interval: 3,
+        ttl: 10,
+      },
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "inet" }}",
+        "{{ .ADVERTISE_CIDR6 | default "inet6" }}",
+      ],
+    },
+  ],
+}

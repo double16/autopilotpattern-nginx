@@ -10,6 +10,7 @@ project="$COMPOSE_PROJECT"
 manifest="$COMPOSE_FILE"
 
 fail() {
+    #docker-compose -p "$project" logs
     echo
     echo '------------------------------------------------'
     echo 'FAILED'
@@ -138,7 +139,7 @@ run() {
     echo 'standing up initial test targets'
     echo '------------------------------------------------'
     echo
-    docker-compose -p "$project" -f "$manifest" up -d
+    docker-compose -p "$project" -f "$manifest" up -d --build --force-recreate --remove-orphans
     wait_for_containers 'consul' 1
     wait_for_containers 'nginx' 1
     wait_for_containers 'backend' 1

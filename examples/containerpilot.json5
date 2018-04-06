@@ -1,5 +1,9 @@
 {
   consul: "{{ if .CONSUL_AGENT }}localhost{{ else }}{{ if .CONSUL }}{{ .CONSUL }}{{ else }}consul{{ end }}{{ end }}:8500",
+  logging: {
+    level: "{{ .LOG_LEVEL | default "INFO" }}",
+    format: "{{ .LOG_FORMAT | default "default" }}",
+  },
   jobs: [
     {
       name: "preStart",
@@ -62,9 +66,10 @@
     },{{ end }}
     {{ if .CONSUL_AGENT }}{
       name: "consul-preStart",
-      exec: "consul-manage",
+      exec: ["/usr/local/bin/consul-manage", "preStart"],
     },{
       name: "consul-agent",
+      port: 8500,
       exec: [
         "consul", "agent",
         "-config-dir=/etc/consul",
@@ -107,14 +112,28 @@
       }
     },{{ end }}
     {
-        name: "node-exporter",
-        port: 9100,
-        exec: ["/usr/local/bin/node_exporter","--web.listen-address=:9100"],
-        health: {
-          exec: ["/usr/bin/curl", "--fail", "-s", "-o", "/dev/null", "http://localhost:9100/metrics"],
-          interval: 60,
-          ttl: 90,
-        },
-    }
-  ]
+      name: "node-exporter",
+      port: 9100,
+      exec: ["/usr/local/bin/node_exporter","--web.listen-address=:9100"],
+      health: {
+        exec: ["/usr/bin/curl", "--fail", "-s", "-o", "/dev/null", "http://localhost:9100/metrics"],
+        interval: 60,
+        ttl: 90,
+      },
+    },
+    {
+      name: "backend-onChange",
+      exec: "reload",
+      when: {
+        source: "watch.backend",
+        each: "changed"
+      }
+    },
+  ],
+  watches: [
+    {
+      name: "backend",
+      interval: 7
+    },
+  ],
 }

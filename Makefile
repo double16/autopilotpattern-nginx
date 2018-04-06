@@ -9,9 +9,9 @@ GIT_COMMIT ?= $(shell git rev-parse --short HEAD)
 GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 WORKSPACE ?= $(shell pwd)
 
-namespace ?= autopilotpattern
+namespace ?= pdouble16
 tag := branch-$(shell basename $(GIT_BRANCH))
-image := $(namespace)/nginx
+image := $(namespace)/autopilotpattern-nginx
 example := $(namespace)/nginx-example
 backend := $(namespace)/nginx-backend
 testImage := $(namespace)/nginx-testrunner

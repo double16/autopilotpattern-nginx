@@ -2,18 +2,17 @@
 # we get the examples docker-compose.yml files. Use 'make build/tester'
 # in the makefile at the root of this repo and everything will work
 
-FROM alpine:3.5
+FROM alpine:3.7
 
-RUN apk update \
-    && apk add nodejs python3 openssl bash curl docker
+RUN apk add --no-cache nodejs python3 openssl bash curl docker
 RUN npm install -g triton json
 
 # the Compose package in the public releases doesn't work on Alpine
-RUN pip3 install docker-compose==1.10.0
+RUN pip3 install docker-compose==1.20.1
 
 # install specific version of Docker and Compose client
 COPY test/triton-docker-cli/triton-docker /usr/local/bin/triton-docker
-RUN sed -i 's/1.9.0/1.10.0/' /usr/local/bin/triton-docker \
+RUN sed -i 's/1.9.0/1.20.1/' /usr/local/bin/triton-docker \
     && ln -s /usr/local/bin/triton-docker /usr/local/bin/triton-compose \
     && ln -s /usr/local/bin/triton-docker /usr/local/bin/triton-docker-install \
     && /usr/local/bin/triton-docker-install \

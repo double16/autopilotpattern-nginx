@@ -1,0 +1,3 @@
+#!/bin/sh -e
+git submodule init
+make build build/tester build/examples test/compose

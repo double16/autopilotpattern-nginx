@@ -1,3 +1,7 @@
 .DS_Store
 **/.DS_Store
 _env*
+README.md
+LICENSE
+Makefile
+hooks/

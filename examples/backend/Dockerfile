@@ -1,24 +1,19 @@
+FROM pdouble16/autopilotpattern-base:1.0.0
 FROM mhart/alpine-node:latest
 
-RUN apk update && \
-    apk add curl
+RUN mkdir -p /var/lib/consul /etc/consul
+COPY --from=0 /usr/local/bin/* /usr/local/bin/
+COPY --from=0 /etc/consul/* /etc/consul/
 
-# Install ContainerPilot
-ENV CONTAINERPILOT_VERSION 2.4.1
-RUN export CP_SHA1=198d96c8d7bfafb1ab6df96653c29701510b833c \
-    && curl -Lso /tmp/containerpilot.tar.gz \
-         "https://github.com/joyent/containerpilot/releases/download/${CONTAINERPILOT_VERSION}/containerpilot-${CONTAINERPILOT_VERSION}.tar.gz" \
-    && echo "${CP_SHA1}  /tmp/containerpilot.tar.gz" | sha1sum -c \
-    && tar zxf /tmp/containerpilot.tar.gz -C /bin \
-    && rm /tmp/containerpilot.tar.gz
+RUN apk add --no-cache curl bash
 
 # COPY ContainerPilot configuration
-COPY containerpilot.json /etc/containerpilot.json
-ENV CONTAINERPILOT=file:///etc/containerpilot.json
+ENV CONTAINERPILOT=/etc/containerpilot.json5
+COPY containerpilot.json5 ${CONTAINERPILOT}
 
 
 # Install our application
 COPY index.js /opt/hello/
 
 EXPOSE 3001
-CMD ["/bin/containerpilot", "node", "/opt/hello/index.js"]
+CMD ["/usr/local/bin/containerpilot"]

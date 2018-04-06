@@ -1,5 +1,9 @@
 {
   consul: "{{ if .CONSUL_AGENT }}localhost{{ else }}{{ if .CONSUL }}{{ .CONSUL }}{{ else }}consul{{ end }}{{ end }}:8500",
+  logging: {
+    level: "{{ .LOG_LEVEL | default "INFO" }}",
+    format: "{{ .LOG_FORMAT | default "default" }}",
+  },
   jobs: [
     {
       name: "preStart",
@@ -8,7 +12,10 @@
     {
       name: "nginx",
       port: 80,
-      interfaces: ["eth0"],
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "eth0" }}",
+        "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
+      ],
       exec: "nginx",
       when: {
         source: "preStart",
@@ -62,9 +69,10 @@
     },{{ end }}
     {{ if .CONSUL_AGENT }}{
       name: "consul-preStart",
-      exec: "consul-manage",
+      exec: ["/usr/local/bin/consul-manage", "preStart"],
     },{
       name: "consul-agent",
+      port: 8500,
       exec: [
         "consul", "agent",
         "-config-dir=/etc/consul",
@@ -77,6 +85,10 @@
         source: "consul-preStart",
         once: "exitSuccess"
       },
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "inet" }}",
+        "{{ .ADVERTISE_CIDR6 | default "inet6" }}",
+      ],
       health: {
         exec: ["/usr/bin/curl", "-sfo", "/dev/null", "http://localhost:8500/v1/status/leader"],
         interval: 10,
@@ -107,14 +119,18 @@
       }
     },{{ end }}
     {
-        name: "node-exporter",
-        port: 9100,
-        exec: ["/usr/local/bin/node_exporter","--web.listen-address=:9100"],
-        health: {
-          exec: ["/usr/bin/curl", "--fail", "-s", "-o", "/dev/null", "http://localhost:9100/metrics"],
-          interval: 5,
-          ttl: 15,
-        },
+      name: "node-exporter",
+      port: 9100,
+      exec: ["/usr/local/bin/node_exporter","--web.listen-address=:9100"],
+      health: {
+        exec: ["/usr/bin/curl", "--fail", "-s", "-o", "/dev/null", "http://localhost:9100/metrics"],
+        interval: 5,
+        ttl: 15,
+      },
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "inet" }}",
+        "{{ .ADVERTISE_CIDR6 | default "inet6" }}",
+      ],
     }
   ]
 }
