@@ -30,7 +30,10 @@
     {
       name: "nginx-public",
       port: 80,
-      interfaces: ["eth1", "eth0"],
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "eth0" }}",
+        "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
+      ],
       health: {
         exec: "health-check http",
         interval: 10,
@@ -40,7 +43,10 @@
     {{ if .ACME_DOMAIN }}{
       name: "nginx-ssl",
       port: 443,
-      interfaces: ["eth0"],
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "eth0" }}",
+        "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
+      ],
       health: {
         exec: "acme init && health-check https",
         interval: 10,
@@ -50,7 +56,10 @@
     {
       name: "nginx-public-ssl",
       port: 443,
-      interfaces: ["eth0"],
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "eth0" }}",
+        "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
+      ],
       health: {
         exec: "health-check https",
         interval: 10,
@@ -60,7 +69,10 @@
     {
       name: "nginx-public-ssl",
       port: 443,
-      interfaces: ["eth1", "eth0"],
+      interfaces: [
+        "{{ .ADVERTISE_CIDR | default "eth0" }}",
+        "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
+      ],
       health: {
         exec: "/usr/bin/curl --insecure --fail --silent --show-error --output /dev/null --header \"HOST: {{ .ACME_DOMAIN }}\" https://localhost/nginx-health",
         interval: 10,
