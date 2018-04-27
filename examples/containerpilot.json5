@@ -74,7 +74,7 @@
         "consul", "agent",
         "-config-dir=/etc/consul",
         "-rejoin",
-        "-retry-join", "{{ if .CONSUL }}{{ .CONSUL }}{{ else }}consul{{ end }}",
+        "-retry-join",  '{{ .CONSUL | default "consul" }}',
         "-retry-max", "10",
         "-retry-interval", "10s"
       ],

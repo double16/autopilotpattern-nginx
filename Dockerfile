@@ -1,5 +1,5 @@
 # A minimal Nginx container including ContainerPilot
-FROM pdouble16/autopilotpattern-base:1.0.0
+FROM pdouble16/autopilotpattern-base:1.1.1
 FROM debian:stretch-slim
 
 RUN mkdir -p /var/lib/consul /etc/consul

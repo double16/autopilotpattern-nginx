@@ -33,7 +33,7 @@ services:
 
 
   consul:
-    image: pdouble16/autopilotpattern-consul:1.0.6-r2
+    image: pdouble16/autopilotpattern-consul:1.0.7-r2
     environment:
       - CONSUL_DEV=1
     restart: always
