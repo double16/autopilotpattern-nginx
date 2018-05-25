@@ -17,6 +17,7 @@
         "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
       ],
       exec: "nginx",
+      initial_status: "warning",
       when: {
         source: "preStart",
         once: "exitSuccess"
@@ -30,6 +31,7 @@
     {
       name: "nginx-public",
       port: 80,
+      initial_status: "warning",
       interfaces: [
         "{{ .ADVERTISE_CIDR | default "eth0" }}",
         "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
@@ -43,6 +45,7 @@
     {{ if .ACME_DOMAIN }}{
       name: "nginx-ssl",
       port: 443,
+      initial_status: "warning",
       interfaces: [
         "{{ .ADVERTISE_CIDR | default "eth0" }}",
         "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
@@ -56,6 +59,7 @@
     {
       name: "nginx-public-ssl",
       port: 443,
+      initial_status: "warning",
       interfaces: [
         "{{ .ADVERTISE_CIDR | default "eth0" }}",
         "{{ .ADVERTISE_CIDR6 | default "eth0" }}",
@@ -69,6 +73,7 @@
     {
       name: "nginx-public-ssl",
       port: 443,
+      initial_status: "warning",
       interfaces: [
         "{{ .ADVERTISE_CIDR | default "eth0" }}",
         "{{ .ADVERTISE_CIDR6 | default "eth0" }}",

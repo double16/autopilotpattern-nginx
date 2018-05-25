@@ -1,4 +1,4 @@
-FROM pdouble16/autopilotpattern-base:1.1.1
+FROM pdouble16/autopilotpattern-base:1.2.0
 FROM mhart/alpine-node:latest
 
 RUN mkdir -p /var/lib/consul /etc/consul
