@@ -18,15 +18,23 @@
       ],
       exec: "nginx",
       initial_status: "warning",
+      {{ if .CONSUL_AGENT }}
+      when: {
+        source: "consul-agent",
+        once: "healthy"
+      },
+      {{ else }}
       when: {
         source: "preStart",
         once: "exitSuccess"
       },
+      {{ end }}
       health: {
         exec: "health-check http",
         interval: 10,
         ttl: 25
       }
+      restarts: "unlimited",
     },
     {
       name: "nginx-public",
@@ -84,10 +92,16 @@
         ttl: 25
       }
     },{{ end }}
-    {{ if .CONSUL_AGENT }}{
+    {{ if .CONSUL_AGENT }}
+    {
       name: "consul-preStart",
       exec: ["/usr/local/bin/consul-manage", "preStart"],
-    },{
+      when: {
+        source: "preStart",
+        once: "exitSuccess"
+      },
+    },
+    {
       name: "consul-agent",
       port: 8500,
       exec: [
