@@ -8,7 +8,7 @@ RUN apk add --no-cache nodejs python3 openssl bash curl docker
 RUN npm install -g triton json
 
 # the Compose package in the public releases doesn't work on Alpine
-RUN pip3 install docker-compose==1.20.1
+RUN pip3 install docker-compose==1.21.1
 
 # install specific version of Docker and Compose client
 COPY test/triton-docker-cli/triton-docker /usr/local/bin/triton-docker

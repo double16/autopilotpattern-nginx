@@ -1,5 +1,5 @@
 # A minimal Nginx container including ContainerPilot
-FROM pdouble16/autopilotpattern-base:1.2.0
+FROM pdouble16/autopilotpattern-base:1.2.1
 FROM debian:stretch-slim
 
 RUN mkdir -p /var/lib/consul /etc/consul
@@ -19,7 +19,7 @@ RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 \
         unzip \
         procps \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /usr/local/lib/lua && curl --fail -s -o /usr/local/lib/lua/prometheus.lua https://raw.githubusercontent.com/knyar/nginx-lua-prometheus/24ab338427bcfd121ac6c9a264a93d482e115e14/prometheus.lua \
+    && mkdir -p /usr/local/lib/lua && curl --fail -s -o /usr/local/lib/lua/prometheus.lua https://raw.githubusercontent.com/knyar/nginx-lua-prometheus/ba9684b01b81be9b8c5b2aaa8bf7171543c447ae/prometheus.lua \
 # forward request and error logs to docker log collector
     && ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
@@ -61,7 +61,6 @@ STOPSIGNAL SIGQUIT
 CMD [ "/usr/local/bin/containerpilot"]
 
 LABEL maintainer="Patrick Double <pat@patdouble.com>" \
-      org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.license="MPL-2.0" \
       org.label-schema.name="Autopilot Pattern Nginx with Extras and Full Prometheus Monitoring" \
       org.label-schema.url="https://github.com/double16/autopilotpattern-nginx" \
