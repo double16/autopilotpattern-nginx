@@ -1,5 +1,5 @@
 # A minimal Nginx container including ContainerPilot
-FROM pdouble16/autopilotpattern-base:1.2.1
+FROM pdouble16/autopilotpattern-base:1.3.0
 FROM debian:stretch-slim
 
 RUN mkdir -p /var/lib/consul /etc/consul
@@ -31,11 +31,11 @@ RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 \
     && unzip /tmp/consul-template.zip -d /usr/local/bin \
     && rm /tmp/consul-template.zip \
 # Add Dehydrated
-    && export DEHYDRATED_VERSION=v0.3.1 \
-    && curl --retry 8 --fail -Lso /tmp/dehydrated.tar.gz "https://github.com/lukas2511/dehydrated/archive/${DEHYDRATED_VERSION}.tar.gz" \
+    && export DEHYDRATED_VERSION=0.6.2 \
+    && curl --retry 8 --fail -Lso /tmp/dehydrated.tar.gz "https://github.com/lukas2511/dehydrated/archive/v${DEHYDRATED_VERSION}.tar.gz" \
     && tar xzf /tmp/dehydrated.tar.gz -C /tmp \
-    && mv /tmp/dehydrated-0.3.1/dehydrated /usr/local/bin \
-    && rm -rf /tmp/dehydrated-0.3.1 \
+    && mv /tmp/dehydrated-${DEHYDRATED_VERSION}/dehydrated /usr/local/bin \
+    && rm -rf /tmp/dehydrated-${DEHYDRATED_VERSION} \
 # Add jq
     && export JQ_VERSION=1.5 \
     && curl --retry 8 --fail -Lso /usr/local/bin/jq "https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64" \

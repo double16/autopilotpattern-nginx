@@ -65,15 +65,14 @@ wait_for_containers() {
 # asserts that the application has registered at least n instances with
 # Consul. fails after the timeout.
 wait_for_service() {
-    local service count timeout i got consul_ip
+    local service count timeout i got
     service="$1"
     count="$2"
     timeout="${3:-30}" # default 30sec
     i=0
     echo -n "waiting for $count instances of $service to be registered with Consul "
-    consul_ip=$(docker inspect "${project}_consul_1" | json -a NetworkSettings.IPAddress)
     while [ $i -lt "$timeout" ]; do
-        got=$(curl -s "http://${consul_ip}:8500/v1/health/service/${service}?passing" \
+        got=$(docker exec "${project}_consul_1" curl -s "http://127.0.0.1:8500/v1/health/service/${service}?passing" \
                      | json -a Service.Address | wc -l | tr -d ' ')
         if [ "$got" -eq "$count" ]; then
             echo
@@ -87,15 +86,14 @@ wait_for_service() {
 }
 
 check_nginx_upstream_matches() {
-    local service count timeout i ips got consul_ip
+    local service count timeout i ips got
     service="$1"
     count="$2"
     timeout="${3:-30}" # default 30sec
     i=0
     echo -n "waiting for $count instances of $service to be in Nginx upstream "
-    consul_ip=$(docker inspect "${project}_consul_1" | json -a NetworkSettings.IPAddress)
     while [ $i -lt "$timeout" ]; do
-        ips=$(curl -s "http://${consul_ip}:8500/v1/health/service/${service}?passing" \
+        ips=$(docker exec "${project}_consul_1" curl -s "http://127.0.0.1:8500/v1/health/service/${service}?passing" \
                      | json -a Service.Address | sort)
         ip_count=$(echo "$ips" | wc -l | tr -d ' ')
         if [ "$ip_count" -eq "$count" ]; then
@@ -139,8 +137,8 @@ run() {
     echo 'standing up initial test targets'
     echo '------------------------------------------------'
     echo
-    docker-compose -p "$project" -f "$manifest" up -d --build --force-recreate --remove-orphans
-    wait_for_containers 'consul' 1
+    docker-compose -p "$project" -f "$manifest" up -d --build --force-recreate --remove-orphans --scale consul=3
+    wait_for_containers 'consul' 3
     wait_for_containers 'nginx' 1
     wait_for_containers 'backend' 1
     wait_for_service 'nginx' 1

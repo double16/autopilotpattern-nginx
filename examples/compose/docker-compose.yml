@@ -8,11 +8,8 @@ services:
     environment:
       - CONSUL_AGENT=1
       - CONSUL=consul
-    links:
-      - consul:consul
     ports:
       - "8080:80"
-    network_mode: bridge
 
 
   backend:
@@ -22,21 +19,16 @@ services:
     environment:
       - CONSUL_AGENT=1
       - CONSUL=consul
-    links:
-      - consul:consul
     expose:
       - 3001
-    network_mode: bridge
 
 
   consul:
-    image: pdouble16/autopilotpattern-consul:1.1.0-r1
+    image: pdouble16/autopilotpattern-consul:1.2.0-r1
     restart: always
-    environment:
-      - CONSUL_DEV=1
     mem_limit: 128m
-    expose:
-      - 8500
+    environment:
+      - CONSUL=consul
     expose:
       - 53
       - 8300
@@ -44,4 +36,3 @@ services:
       - 8302
       - 8400
       - 8500
-    network_mode: bridge
